@@ -1,27 +1,34 @@
 package com.example.mypopularmoviesapplication;
 
-import com.google.gson.annotations.SerializedName;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import java.util.Comparator;
 
-class Movie {
+class Movie implements Parcelable {
 
-    @SerializedName( "title" )
+
     private String title;
-    @SerializedName ( "vote_average" )
-    private int vote_average;
-    @SerializedName ( "poster_path" )
+    private float vote_average;
     private String posterPath;
-    @SerializedName ( "release_date" )
     private String date;
-    @SerializedName ( "overview" )
     private String overview;
-    @SerializedName ( "popularity" )
     private int popularity;
 
 
     /*Constructor*/
-    public Movie ( String title , int vote_average , String posterPath , String date , String overview , int popularity ) {
+    private Movie ( Parcel in ) {
+        title = in.readString ();
+        vote_average = in.readFloat ();
+        posterPath = in.readString ();
+        date = in.readString ();
+        overview = in.readString ();
+        popularity = in.readInt ();
+    }
+    public Movie(){
+
+    }
+    public Movie ( String title , float vote_average , String posterPath , String date , String overview , int popularity ) {
         this.title = title;
         this.vote_average = vote_average;
         this.posterPath = posterPath;
@@ -29,6 +36,18 @@ class Movie {
         this.overview = overview;
         this.popularity = popularity;
     }
+
+    public static final Creator<Movie> CREATOR = new Creator<Movie> () {
+        @Override
+        public Movie createFromParcel ( Parcel in ) {
+            return new Movie ( in );
+        }
+
+        @Override
+        public Movie[] newArray ( int size ) {
+            return new Movie[size];
+        }
+    };
 
     /*Setter & Getter */
     String getTitle () {
@@ -39,7 +58,7 @@ class Movie {
         this.title = title;
     }
 
-    int getVote_average () {
+    float getVote_average () {
         return vote_average;
     }
 
@@ -71,7 +90,7 @@ class Movie {
         this.overview = overview;
     }
 
-    int getPopularity () {
+    private int getPopularity () {
         return popularity;
     }
 
@@ -87,8 +106,23 @@ class Movie {
     };
     static Comparator<Movie> sortVoteData= ( o1 , o2 ) -> {
         double s1 = o1.getVote_average ();
-        int s2=o2.getVote_average ();
+        float s2=o2.getVote_average ();
 
         return (int) (s1-s2);
     };
+
+    @Override
+    public int describeContents () {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel ( Parcel dest , int flags ) {
+        dest.writeString ( title );
+        dest.writeFloat ( vote_average );
+        dest.writeString ( posterPath );
+        dest.writeString ( date );
+        dest.writeString ( overview );
+        dest.writeInt ( popularity );
+    }
 }

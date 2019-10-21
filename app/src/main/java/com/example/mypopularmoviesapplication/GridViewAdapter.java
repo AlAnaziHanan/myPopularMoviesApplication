@@ -59,9 +59,6 @@ class GridViewAdapter extends BaseAdapter {
             Picasso.get ().load ( R.drawable.poster_placeholder ).into ( movieImageView );
         }
 
-        view.setOnClickListener ( v -> Toast.makeText ( context, thisMovie.getTitle () ,Toast.LENGTH_SHORT).show () );
-
-
         return view;
     }
 }

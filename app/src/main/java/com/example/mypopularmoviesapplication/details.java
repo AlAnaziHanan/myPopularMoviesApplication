@@ -38,8 +38,10 @@ public class details extends AppCompatActivity {
         setContentView ( R.layout.details);
 
         Intent intent = getIntent ();
-        Movie mIntent = (Movie) intent.getSerializableExtra ( "detail" );
+        Movie movie = getIntent().getParcelableExtra("Movie");
 
+        // Movie mIntent = (Movie) intent.getSerializableExtra ( "detail" );
+        //Movie mIntent = (Movie) getIntent ().getSerializableExtra ( "Movie" );
         ButterKnife.bind ( this );
 
         this.plot=  findViewById ( R.id.plotIv );
@@ -53,22 +55,22 @@ public class details extends AppCompatActivity {
 
         int receivedImage=intent.getIntExtra ( "image",0 );
         poster.setImageResource ( receivedImage );
-        title.setText ( Objects.requireNonNull ( mIntent ).getTitle () );
-        vote.setText ( mIntent.getVote_average () );
-        plot.setText ( mIntent.getOverview () );
+        title.setText ( Objects.requireNonNull ( movie ).getTitle () );
+        vote.setText ( (int) movie.getVote_average () );
+        plot.setText ( movie.getOverview () );
 
         SimpleDateFormat dateFormat = new SimpleDateFormat ( "dd MMM, yyyy" );
         SimpleDateFormat dateInput = new SimpleDateFormat ( "yyyy-MM-dd" );
-        String date;
-        try {
+        String date=movie.getDate ();
+        /*try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                date = dateFormat.format ( Objects.requireNonNull ( dateInput.parse ( mIntent.getDate () ) ) );
+                date = dateFormat.format ( Objects.requireNonNull ( dateInput.parse ( movie.getDate () ) ) );
             }
         } catch (ParseException e) {
             e.printStackTrace ();
-            date = mIntent.getDate ();
+            date = movie.getDate ();
         }
-        release_date.setText ( mIntent.getDate () );
+        release_date.setText ( movie.getDate () );*/
         //back Button
         Objects.requireNonNull ( getSupportActionBar () ).setDisplayHomeAsUpEnabled ( true );
     }

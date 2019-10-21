@@ -9,12 +9,10 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import java.util.Collections;
 import java.util.List;
 
 import retrofit2.Call;
@@ -23,24 +21,22 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
-    ProgressBar myProgressBar;
+    private ProgressBar myProgressBar;
+    /*Add your key*/
+    private final String key="a1929f608371156c06e3be63aca37892";
 
     private void populateGridView( List<Movie> moviesList ){
         this.moviesList = moviesList;
         GridView myGridView = findViewById ( R.id.moviesGrid );
         GridViewAdapter myAdapter = new GridViewAdapter ( moviesList , this );
         myGridView.setAdapter ( myAdapter );
+        myGridView.setOnItemClickListener ( ( parent , view , position , id ) -> {
 
-        myGridView.setOnItemClickListener ( new AdapterView.OnItemClickListener (  ) {
-
-            @Override
-            public void onItemClick ( AdapterView<?> parent , View view , int position , long id ) {
-                Intent intent = new Intent ( MainActivity.this, details.class );
-                intent.putExtra ( "", moviesList.indexOf ( this ) );
-                startActivity ( intent );
-            }
-
-        });
+            Movie movie = new Movie();
+            Intent intent = new Intent ( MainActivity.this, details.class );
+            intent.putExtra ( "Movie",movie );
+            startActivity ( intent );
+        } );
     }
 
     @Override
@@ -48,26 +44,23 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate ( savedInstanceState );
         setContentView ( R.layout.activity_main );
 
-
         final ProgressBar myProgressBar = findViewById ( R.id.progressBar );
         myProgressBar.setIndeterminate ( true );
         myProgressBar.setVisibility ( View.VISIBLE );
 
+        GetPopService APIService = RetrofitClientInstance.getRetrofit ().create ( GetPopService.class );
 
-        GetDataService APIService = RetrofitClientInstance.getRetrofit ().create ( GetDataService.class );
-
-        /*Add your key*/
-        Call<List<Movie>> call = APIService.getMovies ("a1929f608371156c06e3be63aca37892");
-        call.enqueue ( new Callback<List<Movie>> () {
+        Call<Model> call = APIService.getPopMovies (key);
+        call.enqueue ( new Callback<Model> () {
             @Override
-            public void onResponse ( Call<List<Movie>> call , Response<List<Movie>> response ) {
-
+            public void onResponse ( Call<Model> call , Response<Model> response ) {
                 myProgressBar.setVisibility ( View.GONE );
-                populateGridView ( response.body () );
+                List<Movie> result = response.body ().getResults();
+                populateGridView ( result);
             }
 
             @Override
-            public void onFailure ( Call<List<Movie>> call , Throwable throwable ) {
+            public void onFailure ( Call<Model> call , Throwable throwable ) {
                 myProgressBar.setVisibility ( View.GONE );
                 Toast.makeText ( MainActivity.this,throwable.getMessage (),Toast.LENGTH_LONG ).show ();
             }
@@ -80,26 +73,61 @@ public class MainActivity extends AppCompatActivity {
         inflater.inflate ( R.menu.menu,menu );
         return true;
     }
-    List<Movie> moviesList;
+    private List<Movie> moviesList;
     @Override
     public boolean onOptionsItemSelected ( @NonNull MenuItem item ) {
-
 
         switch (item.getItemId ()){
             case R.id.popularMovies:
                 if(moviesList!=null) {
-                    Collections.sort ( moviesList , Movie.sortPopData );
+                    sortByPop();
                     return true;
                 }
-                else populateGridView ( moviesList );
+
             case R.id.topRatedMovies:
                 if(moviesList!=null) {
-                    Collections.sort(moviesList, Movie.sortVoteData);
-                    return true;}
-                else populateGridView ( moviesList );
+                   sortByVote ();
+                    return true;
+                }
         }
         return super.onOptionsItemSelected ( item );
     }
 
+    private void sortByPop (){
+        GetPopService APIService = RetrofitClientInstance.getRetrofit ().create ( GetPopService.class );
+        Call<Model> call = APIService.getPopMovies (key);
+        call.enqueue ( new Callback<Model> () {
+            @Override
+            public void onResponse ( Call<Model> call , Response<Model> response ) {
+                myProgressBar.setVisibility ( View.GONE );
+                List<Movie> result = response.body ().getResults();
+                populateGridView ( result);
+            }
 
+            @Override
+            public void onFailure ( Call<Model> call , Throwable throwable ) {
+                myProgressBar.setVisibility ( View.GONE );
+                Toast.makeText ( MainActivity.this,throwable.getMessage (),Toast.LENGTH_LONG ).show ();
+            }
+        } );
+    }
+    private void sortByVote (){
+        GetVoteService APIService = RetrofitClientInstance.getRetrofit ().create ( GetVoteService.class );
+        Call<Model> call = APIService.getVoteMovies (key);
+        call.enqueue ( new Callback<Model> () {
+            @Override
+            public void onResponse ( Call<Model> call , Response<Model> response ) {
+
+                myProgressBar.setVisibility ( View.GONE );
+                List<Movie> result = response.body ().getResults();
+                populateGridView ( result);
+            }
+
+            @Override
+            public void onFailure ( Call<Model> call , Throwable throwable ) {
+                myProgressBar.setVisibility ( View.GONE );
+                Toast.makeText ( MainActivity.this,throwable.getMessage (),Toast.LENGTH_LONG ).show ();
+            }
+        } );
+    }
 }
