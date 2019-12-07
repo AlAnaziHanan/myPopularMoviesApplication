@@ -5,7 +5,7 @@ import android.os.Parcelable;
 
 import java.util.Comparator;
 
-class Movie implements Parcelable {
+public class Movie implements Parcelable {
 
 
     private String title;
@@ -14,6 +14,7 @@ class Movie implements Parcelable {
     private String date;
     private String overview;
     private int popularity;
+    private int movieId;
 
 
     /*Constructor*/
@@ -24,17 +25,20 @@ class Movie implements Parcelable {
         date = in.readString ();
         overview = in.readString ();
         popularity = in.readInt ();
+        movieId = in.readInt ();
     }
     public Movie(){
 
     }
-    public Movie ( String title , float vote_average , String posterPath , String date , String overview , int popularity ) {
-        this.title = title;
-        this.vote_average = vote_average;
-        this.posterPath = posterPath;
-        this.date = date;
-        this.overview = overview;
-        this.popularity = popularity;
+
+    public Movie ( String title , float vote_average , String posterPath , String date , String overview , int popularity , int movieId ) {
+        this.title=title;
+        this.vote_average=vote_average;
+        this.posterPath=posterPath;
+        this.date=date;
+        this.overview=overview;
+        this.popularity=popularity;
+        this.movieId=movieId;
     }
 
     public static final Creator<Movie> CREATOR = new Creator<Movie> () {
@@ -50,6 +54,7 @@ class Movie implements Parcelable {
     };
 
     /*Setter & Getter */
+
     String getTitle () {
         return title;
     }
@@ -60,10 +65,6 @@ class Movie implements Parcelable {
 
     float getVote_average () {
         return vote_average;
-    }
-
-    public void setVote_average ( int vote_average ) {
-        this.vote_average = vote_average;
     }
 
     String getPosterPath () {
@@ -98,6 +99,18 @@ class Movie implements Parcelable {
         this.popularity = popularity;
     }
 
+    public void setVote_average ( float vote_average ) {
+        this.vote_average=vote_average;
+    }
+
+    public int getMovieId () {
+        return movieId;
+    }
+
+    public void setMovieId ( int movieId ) {
+        this.movieId=movieId;
+    }
+
     static Comparator<Movie> sortPopData= ( o1 , o2 ) -> {
         int s1 = o1.getPopularity ();
         int s2=o2.getPopularity ();
@@ -124,5 +137,6 @@ class Movie implements Parcelable {
         dest.writeString ( date );
         dest.writeString ( overview );
         dest.writeInt ( popularity );
+        dest.writeInt ( movieId );
     }
 }
