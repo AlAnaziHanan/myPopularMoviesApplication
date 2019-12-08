@@ -5,24 +5,23 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LiveData;
 
 import com.example.mypopularmoviesapplication.Movie;
 import com.example.mypopularmoviesapplication.moviesDB;
 
-import java.util.List;
+import java.util.Objects;
 
 public class favoriteMain extends AndroidViewModel {
     private static  final String TAG = favoriteMain.class.getSimpleName ();
-    private final LiveData<List<Favorites>> fav;
-    private favorite_DAO favoriteDao;
+    private final Movie fav;
+    private final favorite_DAO favoriteDao;
 
-    public  favoriteMain ( Application application ){
+    private favoriteMain ( Application application ){
         super (application);
         moviesDB moviesDB =com.example.mypopularmoviesapplication.moviesDB.getsInstance ( application );
         Log.d (TAG,"Retrieving from DataBase");
         favoriteDao = com.example.mypopularmoviesapplication.moviesDB.favoriteDao ();
-        fav = favoriteDao.loadAllFavorite ();
+        fav = Objects.requireNonNull ( favoriteDao ).loadAllFavorite ();
     }
 
     public Movie getAllFav(){
@@ -41,7 +40,7 @@ public class favoriteMain extends AndroidViewModel {
 
 
     private static class InsertFavAsyncTask  extends AsyncTask<Favorites, Void, Void>{
-        private favorite_DAO favoriteDao;
+        private final favorite_DAO favoriteDao;
 
         private InsertFavAsyncTask(favorite_DAO favoriteDao){
             this.favoriteDao = favoriteDao;
@@ -53,7 +52,7 @@ public class favoriteMain extends AndroidViewModel {
         }
     }
     private static class UpdateFavAsyncTask  extends AsyncTask<Favorites, Void, Void>{
-        private favorite_DAO favoriteDao;
+        private final favorite_DAO favoriteDao;
 
         private UpdateFavAsyncTask(favorite_DAO favoriteDao){
             this.favoriteDao = favoriteDao;
@@ -65,7 +64,7 @@ public class favoriteMain extends AndroidViewModel {
         }
     }
     private static class DeleteFavAsyncTask  extends AsyncTask<Favorites, Void, Void>{
-        private favorite_DAO favoriteDao;
+        private final favorite_DAO favoriteDao;
 
         private DeleteFavAsyncTask(favorite_DAO favoriteDao){
             this.favoriteDao = favoriteDao;
@@ -77,7 +76,7 @@ public class favoriteMain extends AndroidViewModel {
         }
     }
     private static class DeleteAllFavAsyncTask  extends AsyncTask<Void, Void, Void>{
-        private favorite_DAO favoriteDao;
+        private final favorite_DAO favoriteDao;
 
         private DeleteAllFavAsyncTask(favorite_DAO favoriteDao){
             this.favoriteDao = favoriteDao;

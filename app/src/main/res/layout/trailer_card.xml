@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:adjustViewBounds="true"
-    android:background="@color/black">
+   >
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView"
@@ -28,7 +28,9 @@
                 android:layout_height="150dp"
                 android:layout_marginLeft="150dp"
                 android:gravity="center"
-                android:src="@drawable/youtube" />
+                android:src="@drawable/youtube"
+                android:contentDescription="@string/movie_title"
+                android:layout_marginStart="150dp" />
 
             <TextView
                 android:layout_width="match_parent"

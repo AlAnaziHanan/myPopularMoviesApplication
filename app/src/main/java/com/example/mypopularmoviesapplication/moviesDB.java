@@ -10,12 +10,13 @@ import androidx.room.RoomDatabase;
 import com.example.mypopularmoviesapplication.Favorite.Favorites;
 import com.example.mypopularmoviesapplication.Favorite.favorite_DAO;
 
+@SuppressWarnings("SameReturnValue")
 @Database ( entities = {Favorites.class}, version = 1, exportSchema = false)
 public abstract class moviesDB extends RoomDatabase {
 
     private static final String LOG_TAG = moviesDB.class.getSimpleName ();
 
-    public static  moviesDB sInstance;
+    private static  moviesDB sInstance;
 
     public static favorite_DAO favoriteDao () {
         return null;

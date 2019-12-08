@@ -1,5 +1,6 @@
 package com.example.mypopularmoviesapplication;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -26,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
     private favoriteMain movieViewModel;
     private ProgressBar myProgressBar;
  //   private AddFavorite addFavorite;
-    List<Movie> moviesList;
+ private List<Movie> moviesList;
 
 
     /*Add your key*/
@@ -141,6 +142,7 @@ public class MainActivity extends AppCompatActivity {
             }
         } );
     }
+    @SuppressLint("StaticFieldLeak")
     private void sortByFavorite (){
         myProgressBar.setVisibility ( View.GONE );
        /* movieViewModel =ViewModelProviders.of(this).get(favoriteMain.class);
@@ -159,11 +161,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse ( Call<Model> call , Response<Model> response ) {
                 if(response.isSuccessful ()){
-                    if(response!=null){
-                        myProgressBar.setVisibility ( View.GONE );
-                        List<Movie> result = response.body ().getResults();
-                        populateGridView ( result);
-                    }
+                    myProgressBar.setVisibility ( View.GONE );
+                    List<Movie> result = response.body ().getResults();
+                    populateGridView ( result);
                 }
             }
             @Override
@@ -174,7 +174,7 @@ public class MainActivity extends AppCompatActivity {
         } );
 
 
-        new AsyncTask<Void, Void, Void> (){
+         new AsyncTask<Void, Void, Void> (){
 
             @Override
             protected Void doInBackground ( Void... voids ) {

@@ -2,6 +2,7 @@ package com.example.mypopularmoviesapplication.Review;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,9 +22,6 @@ import retrofit2.Call;
  */
 class reviewFragment extends Fragment {
 
-    /*Add your key*/
-    private final String KEY="a1929f608371156c06e3be63aca37892";
-
 
     public reviewFragment () {
         // Required empty public constructor
@@ -37,11 +35,19 @@ class reviewFragment extends Fragment {
         Context context = getContext ();
         review review = getIntent().getParcelableExtra("Movie");
         GetDataService APIService = RetrofitClientInstance.getRetrofit ().create ( GetDataService.class );
-        Call<review> call = APIService.getReviews (id , KEY);
+
+
+        /*Add your key*/
+        String KEY="a1929f608371156c06e3be63aca37892";
+
+
+        Call<review> call = APIService.getReviews (id , KEY );
         return view;
     }
 
-
+    private Intent getIntent () {
+        return getIntent ();
+    }
 
 
 }

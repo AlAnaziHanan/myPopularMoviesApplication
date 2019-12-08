@@ -25,7 +25,6 @@ import com.github.ivbaranov.mfb.MaterialFavoriteButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -51,11 +50,7 @@ public class details extends AppCompatActivity {
     TextView review;
     private int movie_id;
     private Movie movie;
-    private  TrailerAdapter trailerAdapter;
     private List<Trailer> trailers;
-    private moviesDB moviesDb;
-    List<Favorites> favorites=new ArrayList<> (  );
-    int movieID;
 
     @RequiresApi(api=Build.VERSION_CODES.N)
 
@@ -67,7 +62,7 @@ public class details extends AppCompatActivity {
         Intent intent = getIntent ();
         movie = getIntent().getParcelableExtra("Movie");
         //fav helper
-        moviesDb=moviesDB.getsInstance ( getApplicationContext () );
+        moviesDB moviesDb=moviesDB.getsInstance ( getApplicationContext () );
 
         ButterKnife.bind ( this );
 
@@ -95,28 +90,24 @@ public class details extends AppCompatActivity {
         vote.setText ( (int) movie.getVote_average () );
         plot.setText ( movie.getOverview () );
         movie_id=movie.getMovieId ();
-        String date=movie.getDate ();
 
         //Favorite
         MaterialFavoriteButton materialFavoriteButtonFav =findViewById ( R.id.favorite_button );
 
         materialFavoriteButtonFav.setOnFavoriteChangeListener (
-                new MaterialFavoriteButton.OnFavoriteChangeListener () {
-                    @Override
-                    public void onFavoriteChanged ( MaterialFavoriteButton buttonView , boolean favorite ) {
-                        if (favorite){
-                            SharedPreferences.Editor editor = getSharedPreferences ( "com.example.mypopularmoviesapplication.details", MODE_PRIVATE ).edit ();
-                            editor.putBoolean ( "Favorite Added", true );
-                            editor.commit ();
-                            saveFavorite ();
-                            Snackbar.make ( buttonView, "Movie Added to Favorite",
-                                    Snackbar.LENGTH_SHORT).show ();
-                        }else{
-                            SharedPreferences.Editor editor = getSharedPreferences ( "com.example.mypopularmoviesapplication.details", MODE_PRIVATE ).edit ();
-                            editor.putBoolean ( "Favorite Removed" ,true);
-                            editor.commit ();
-                            Snackbar.make ( buttonView, "Movie Removed from Favorite", Snackbar.LENGTH_SHORT ).show ();
-                        }
+                ( buttonView , favorite ) -> {
+                    if (favorite){
+                        SharedPreferences.Editor editor = getSharedPreferences ( "com.example.mypopularmoviesapplication.details", MODE_PRIVATE ).edit ();
+                        editor.putBoolean ( "Favorite Added", true );
+                        editor.apply ();
+                        saveFavorite ();
+                        Snackbar.make ( buttonView, "Movie Added to Favorite",
+                                Snackbar.LENGTH_SHORT).show ();
+                    }else{
+                        SharedPreferences.Editor editor = getSharedPreferences ( "com.example.mypopularmoviesapplication.details", MODE_PRIVATE ).edit ();
+                        editor.putBoolean ( "Favorite Removed" ,true);
+                        editor.apply ();
+                        Snackbar.make ( buttonView, "Movie Removed from Favorite", Snackbar.LENGTH_SHORT ).show ();
                     }
                 }
 
@@ -133,10 +124,14 @@ public class details extends AppCompatActivity {
         float avg_rate = movie.getVote_average ();
         final Favorites favorites = new Favorites ( movie_id ,  title ,  poster , plot ,   avg_rate , release_date  ) ;
 
-        favoriteExec.getInstance().diskIO().execute ( () -> moviesDB.favoriteDao ().InsertFavorite ( favorites ) );
+
+
+      /*  favoriteExec.getInstance().diskIO().execute ( () -> {
+            return Objects.requireNonNull ( moviesDB.favoriteDao () ).InsertFavorite ( favorites );
+        } );*/
     }
     private void deleteFavorite (){
-        favoriteExec.getInstance().diskIO().execute ( () -> moviesDB.favoriteDao ().deleteFavoriteWithId ( movie_id ) );
+       // favoriteExec.getInstance().diskIO().execute ( () -> Objects.requireNonNull ( moviesDB.favoriteDao () ).deleteFavoriteWithId ( movie_id ) );
     }
 
     @Override
@@ -162,7 +157,7 @@ public class details extends AppCompatActivity {
 
     private void initView(){
 
-        trailerAdapter=new TrailerAdapter ( this , trailers );
+        TrailerAdapter trailerAdapter=new TrailerAdapter ( this , trailers );
         rv =findViewById ( R.id. videoRV);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager ( getApplicationContext () );
         rv.setLayoutManager ( mLayoutManager );
@@ -172,16 +167,16 @@ public class details extends AppCompatActivity {
         load_Review();
 
     }
-    int movieId=Objects.requireNonNull ( getIntent ().getExtras () ).getInt ( "id" );
+    private final int movieId = Objects.requireNonNull ( getIntent ().getExtras () ).getInt ( "id" );
     private void load () {
 
         try {
-            if (BuildConfig.DATABASE_NAME.isEmpty ()) {
+            if (BuildConfig.moviesDB.isEmpty ()) {
                 Toast.makeText ( getApplicationContext () , "Please Get you Key from themoviedb.org" , Toast.LENGTH_SHORT ).show ();
                 return;
             }
             GetDataService APIService=RetrofitClientInstance.getRetrofit ().create ( GetDataService.class );
-            Call<TrailerRes> call=APIService.getVideos ( movieId , BuildConfig.DATABASE_NAME );
+            Call<TrailerRes> call=APIService.getVideos ( movieId , BuildConfig.moviesDB );
             call.enqueue ( new Callback<TrailerRes> () {
                 @Override
                 public void onResponse ( Call<TrailerRes> call , Response<TrailerRes> response ) {
@@ -205,22 +200,21 @@ public class details extends AppCompatActivity {
         }
 
     }
-    //TODO
+
     private void load_Review(){
 
         try {
-            if (BuildConfig.DATABASE_NAME.isEmpty ()) {
+            if (BuildConfig.moviesDB.isEmpty ()) {
                 Toast.makeText ( getApplicationContext () , "Please Get you Key from themoviedb.org" , Toast.LENGTH_SHORT ).show ();
                 return;
             }
             GetDataService APIService=RetrofitClientInstance.getRetrofit ().create ( GetDataService.class );
-            Call<TrailerRes> call=APIService.getVideos ( movieId , BuildConfig.DATABASE_NAME );
+            Call<TrailerRes> call=APIService.getVideos ( movieId , BuildConfig.moviesDB );
             call.enqueue ( new Callback<TrailerRes> () {
                 @Override
                 public void onResponse ( Call<TrailerRes> call , Response<TrailerRes> response ) {
                     if (response.isSuccessful ()) {
                         if(response.body ()!=null){
-                            ///
                             List<Trailer> trailers=response.body ().getTrailer ();
                             rv.setAdapter ( new TrailerAdapter ( getApplicationContext () , trailers ) );
                             rv.smoothScrollToPosition ( 0 );

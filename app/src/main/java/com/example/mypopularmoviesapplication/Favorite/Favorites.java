@@ -3,6 +3,7 @@ package com.example.mypopularmoviesapplication.Favorite;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
@@ -14,6 +15,7 @@ public class Favorites {
 
     /*table columns*/
     //id
+    @NonNull
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name="id")
     private int id;
@@ -22,7 +24,7 @@ public class Favorites {
     private int movieid;
 
     @ColumnInfo(name="title")
-    public String title;
+    private String title;
 
     @ColumnInfo(name="poster_Path")
     private String posterPath;
@@ -42,8 +44,6 @@ public class Favorites {
     @ColumnInfo(name="popularity")
     private int popularity;
 
-    public Favorites () {
-    }
 
     public Favorites ( int id , int movieid , String title , String posterPath , String overview , String reviews , float vote_average , String date , int popularity ) {
         this.id=id;
@@ -56,6 +56,7 @@ public class Favorites {
         this.date=date;
         this.popularity=popularity;
     }
+
 
     public Favorites ( int movie_id , TextView title , ImageView poster , TextView plot , float avg_rate , TextView release_date ) {
     }
@@ -131,4 +132,6 @@ public class Favorites {
     public void setPopularity ( int popularity ) {
         this.popularity = popularity;
     }
+
+
 }

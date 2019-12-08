@@ -2,11 +2,12 @@ package com.example.mypopularmoviesapplication.Favorite;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
-import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
+
+import com.example.mypopularmoviesapplication.Movie;
 
 import java.util.List;
 
@@ -16,7 +17,7 @@ public
 interface favorite_DAO {
     //Queries and LiveData
     @Query( "SELECT * FROM favoriteTable" )//table created in Favorites class
-    LiveData<List<Favorites>> loadAllFavorite ();
+    Movie loadAllFavorite ();
 
     @Query ( "SELECT * FROM favoriteTable WHERE title=:title" )
     LiveData<List<Favorites>> loadAll ( String title );
@@ -27,14 +28,20 @@ interface favorite_DAO {
     @Update(onConflict = OnConflictStrategy.REPLACE)
     void updateFavorite ( Favorites favorites );
 
-    @Delete
-    void deleteAllFavorite (  );
+    /*@Delete
+    void deleteAllFavorite (  );*/
+
+    @Query("DELETE FROM favoriteTable")
+    void deleteAllFavorite ();
+
 
     @Query ( "DELETE FROM favoriteTable WHERE movieid=:movieID" )
     void deleteFavoriteWithId ( int movieID );
 
-    @Query ( "DELETE FROM favoriteTable " )
-    void deleteFavorite ( Favorites favorites );
+    @Query("DELETE FROM favoriteTable ")
+    default void deleteFavorite ( Favorites favorites ) {
+
+    }
 
     @Query ( "SELECT * FROM favoriteTable WHERE id=:id" )
     LiveData<List<Favorites>> loadFavoriteById ( int id );

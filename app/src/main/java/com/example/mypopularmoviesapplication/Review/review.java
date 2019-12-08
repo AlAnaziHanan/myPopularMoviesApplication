@@ -42,7 +42,7 @@ public class review implements Parcelable {
         }
     };
 
-    protected  review(Parcel in){
+    private review ( Parcel in ){
         this.author=((String) in.readValue((String.class.getClassLoader())));
         this.reviewContent=((String) in.readValue((String.class.getClassLoader())));
         this.id=((String) in.readValue((String.class.getClassLoader())));

@@ -6,8 +6,6 @@ import android.os.Parcelable;
 import java.util.Comparator;
 
 public class Movie implements Parcelable {
-
-
     private String title;
     private float vote_average;
     private String posterPath;
@@ -16,8 +14,7 @@ public class Movie implements Parcelable {
     private int popularity;
     private int movieId;
 
-
-    /*Constructor*/
+    /*Constructors*/
     private Movie ( Parcel in ) {
         title = in.readString ();
         vote_average = in.readFloat ();
@@ -27,7 +24,7 @@ public class Movie implements Parcelable {
         popularity = in.readInt ();
         movieId = in.readInt ();
     }
-    public Movie(){
+    private Movie ( ) {
 
     }
 
@@ -54,7 +51,6 @@ public class Movie implements Parcelable {
     };
 
     /*Setter & Getter */
-
     String getTitle () {
         return title;
     }
@@ -91,7 +87,7 @@ public class Movie implements Parcelable {
         this.overview = overview;
     }
 
-    private int getPopularity () {
+    int getPopularity () {
         return popularity;
     }
 
@@ -103,7 +99,7 @@ public class Movie implements Parcelable {
         this.vote_average=vote_average;
     }
 
-    public int getMovieId () {
+    int getMovieId () {
         return movieId;
     }
 
@@ -111,6 +107,8 @@ public class Movie implements Parcelable {
         this.movieId=movieId;
     }
 
+
+    /*Comparators*/
     static Comparator<Movie> sortPopData= ( o1 , o2 ) -> {
         int s1 = o1.getPopularity ();
         int s2=o2.getPopularity ();
